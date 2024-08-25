@@ -16,7 +16,7 @@ function buildMetadata(sampleName) {
     // Use `.html("") to clear any existing metadata
     sampleMetadataPanel.html("");
 
-    // Inside a loop, you will need to use d3 to append new tags for each key-value in the filtered metadata.
+    // Inside a loop, use D3 to append new tags for each key-value in the filtered metadata.
     let sampleMetadataKeys = Object.keys(sampleMetadata);
     let sampleMetadataValues = Object.values(sampleMetadata);
     let sampleMetadataHtmlString = ""
@@ -24,6 +24,8 @@ function buildMetadata(sampleName) {
       // Show the 'key' as bold text, followed by the 'value', and end each key-value pair with an HTML line break
       sampleMetadataHtmlString += `<strong>${sampleMetadataKeys[i].toUpperCase()}</strong>: ${sampleMetadataValues[i]}</br>`;
     }
+
+    // Render the collated metadata for the current test subject
     sampleMetadataPanel.html(sampleMetadataHtmlString);
   });
 }
@@ -45,6 +47,7 @@ function buildCharts(sampleName) {
     let otu_labels = sample.otu_labels;
     let sample_values = sample.sample_values;
 
+    // --------------------------------
     // Build a Bubble Chart
     var bubbleTrace = {
       type: 'scatter',
@@ -59,33 +62,63 @@ function buildCharts(sampleName) {
       text: otu_labels
     };
 
-    var data = [bubbleTrace];
+    var bubbleData = [bubbleTrace];
 
-    var layout = {
-      title: 'Bacteria Cultures Per Sample',
+    var bubbleLayout = {
+      title: {
+        text: '<b>Bacteria Cultures Per Sample</b>'
+      },
       xaxis: {
         title: 'OTU ID'
       },
       yaxis: {
         title: 'Number of Bacteria'
       },
-
       showlegend: false
     };
 
     // Render the Bubble Chart
-    Plotly.newPlot('bubble', data, layout);
+    Plotly.newPlot('bubble', bubbleData, bubbleLayout);
 
+    // --------------------------------
 
     // For the Bar Chart, map the otu_ids to a list of strings for your yticks
+    let otu_id_labels = otu_ids.map(item => `OTU ${item.toString()} `)
 
+    // Limit the bar chart to the "top 10" OTUs only.
+    // NOTE: the sample data set is already sorted by "sample_values" descending, so we can just take the first 10 array items in each case.
+    // NOTE: we reverse the arraysto accommodate Plotly's defaults.
+    let otu_id_labels_Top10 = otu_id_labels.slice(0, 10).reverse();
+    let otu_labels_Top10 = otu_labels.slice(0, 10).reverse();
+    let sample_values_Top10 = sample_values.slice(0, 10).reverse();
 
+    // --------------------------------
     // Build a Bar Chart
-    // Don't forget to slice and reverse the input data appropriately
+    var barTrace = {
+        type: "bar",
+        x: sample_values_Top10,
+        y: otu_id_labels_Top10,
+        text: otu_labels_Top10,
+        orientation: "h"
+    };
 
+    var barData = [barTrace];
+
+    var barLayout = {
+      title: {
+        text: '<b>Top 10 Bacteria Cultures Found</b>'
+      },
+      xaxis: {
+        title: 'Number of Bacteria'
+      },
+      yaxis: {
+        text: otu_id_labels_Top10
+      },
+      showlegend: false
+    };
 
     // Render the Bar Chart
-
+    Plotly.newPlot('bar', barData, barLayout);
   });
 }
 
