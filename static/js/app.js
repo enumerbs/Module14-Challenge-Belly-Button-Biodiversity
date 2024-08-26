@@ -20,7 +20,7 @@ function buildMetadata(sampleName) {
     let sampleMetadataKeys = Object.keys(sampleMetadata);
     let sampleMetadataValues = Object.values(sampleMetadata);
     let sampleMetadataHtmlString = ""
-    for (i=0; i < sampleMetadataKeys.length; i++) {
+    for (let i=0; i < sampleMetadataKeys.length; i++) {
       // Show the 'key' as bold text, followed by the 'value', and end each key-value pair with an HTML line break
       sampleMetadataHtmlString += `<strong>${sampleMetadataKeys[i].toUpperCase()}</strong>: ${sampleMetadataValues[i]}</br>`;
     }
@@ -143,7 +143,7 @@ function init() {
               .attr("value", firstSampleName)
               .text(firstSampleName);
     // Use D3 to append a new option for each additional sample name beyond the first.
-    for (i=1; i < names.length; i++) {
+    for (let i=1; i < names.length; i++) {
       dropdown.append("option")
               .attr("value", names[i])
               .text(names[i]);
